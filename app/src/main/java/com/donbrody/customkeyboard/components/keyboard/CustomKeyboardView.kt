@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.text.InputType
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import android.view.inputmethod.InputConnection
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.TextView
+import com.donbrody.customkeyboard.Util.matcher
 import com.donbrody.customkeyboard.components.expandableView.ExpandableState
 import com.donbrody.customkeyboard.components.expandableView.ExpandableStateListener
 import com.donbrody.customkeyboard.components.expandableView.ExpandableView
@@ -38,22 +41,41 @@ class CustomKeyboardView(context: Context, attr: AttributeSet) : ExpandableView(
         setBackgroundColor(Color.GRAY)
 
         keyboardListener = object: KeyboardListener {
-            override fun characterClicked(c: Char) {
+
+            override fun characterClicked(c: Char, textView: TextView) {
+                // don't need to do anything here
+                val matcher = fieldInFocus?.text.toString()
+                textView.text = matcher.matcher()
+            }
+
+            override fun textViewClicked(textView: TextView) {
                 // don't need to do anything here
             }
 
-            override fun specialKeyClicked(key: KeyboardController.SpecialKey) {
-                if (key === KeyboardController.SpecialKey.DONE) {
-                    translateLayout()
-                } else if (key === KeyboardController.SpecialKey.NEXT) {
-                    fieldInFocus?.focusSearch(View.FOCUS_DOWN)?.let {
-                        it.requestFocus()
-                        checkLocationOnScreen()
-                        return
+            override fun specialKeyClicked(key: KeyboardController.SpecialKey, textView: TextView) {
+                when {
+                    key === KeyboardController.SpecialKey.DONE -> {
+                        translateLayout()
+                    }
+                    key === KeyboardController.SpecialKey.NEXT -> {
+                        fieldInFocus?.focusSearch(View.FOCUS_DOWN)?.let {
+                            it.requestFocus()
+                            checkLocationOnScreen()
+                            return
+                        }
+                    }
+                    key === KeyboardController.SpecialKey.BACKSPACE -> {
+                        if (fieldInFocus?.text.toString().isNotEmpty() || textView.text.toString().isNotEmpty()) {
+                            textView.text = fieldInFocus?.text.toString().matcher()
+                        }
                     }
                 }
             }
         }
+
+
+
+
 
         // register listener with parent (listen for state changes)
         registerListener(object: ExpandableStateListener {

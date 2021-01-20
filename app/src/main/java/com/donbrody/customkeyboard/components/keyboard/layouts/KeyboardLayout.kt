@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import com.donbrody.customkeyboard.components.keyboard.KeyboardListener
 import com.donbrody.customkeyboard.components.keyboard.controllers.KeyboardController
 import com.donbrody.customkeyboard.components.utilities.ComponentUtils
@@ -20,6 +21,7 @@ abstract class KeyboardLayout(context: Context, private val controller: Keyboard
 
     private var screenWidth = 0.0f
     internal var textSize = 20.0f
+    private lateinit var textView: TextView
 
     private val Int.toDp: Int
         get() = (this / Resources.getSystem().displayMetrics.density).toInt()
@@ -54,6 +56,21 @@ abstract class KeyboardLayout(context: Context, private val controller: Keyboard
         return wrapper
     }
 
+    internal fun createTextView(text: String, widthAsPctOfScreen: Float): TextView {
+        val textView = TextView(context)
+        textView.apply {
+            layoutParams = LayoutParams(
+                    (screenWidth * widthAsPctOfScreen).toInt(),
+                    LayoutParams.WRAP_CONTENT
+            )
+            isAllCaps = false
+            this.textSize = 16f
+            this.text = text
+        }.also { this.textView = it }
+        textView.setOnClickListener { controller?.onKeyStroke(textView) }
+        return textView
+    }
+
     private fun createButton(text: String, widthAsPctOfScreen: Float): Button {
         val button = Button(context)
         button.layoutParams = LayoutParams(
@@ -61,7 +78,7 @@ abstract class KeyboardLayout(context: Context, private val controller: Keyboard
                 LayoutParams.WRAP_CONTENT
         )
         ComponentUtils.setBackgroundTint(button, Color.LTGRAY)
-        button.setAllCaps(false)
+        button.isAllCaps = false
         button.textSize = textSize
         button.text = text
         return button
@@ -69,14 +86,14 @@ abstract class KeyboardLayout(context: Context, private val controller: Keyboard
 
     internal fun createButton(text: String, widthAsPctOfScreen: Float, c: Char): Button {
         val button = createButton(text, widthAsPctOfScreen)
-        button.setOnClickListener { controller?.onKeyStroke(c) }
+        button.setOnClickListener { controller?.onKeyStroke(c,textView) }
         return button
     }
 
     internal fun createButton(text: String, widthAsPctOfScreen: Float,
                               key: KeyboardController.SpecialKey): Button {
         val button = createButton(text, widthAsPctOfScreen)
-        button.setOnClickListener { controller?.onKeyStroke(key) }
+        button.setOnClickListener { controller?.onKeyStroke(key,textView) }
         return button
     }
 

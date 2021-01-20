@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import com.donbrody.customkeyboard.components.keyboard.KeyboardListener
 import com.donbrody.customkeyboard.components.keyboard.controllers.KeyboardController
 import com.donbrody.customkeyboard.components.utilities.ComponentUtils
@@ -35,7 +36,7 @@ class QwertyKeyboardLayout(context: Context, controller: KeyboardController?) :
 
     init {
         controller?.registerListener(object: KeyboardListener {
-            override fun characterClicked(c: Char) {
+            override fun characterClicked(c: Char, textView: TextView) {
                 if (capsState === CapsState.CAPS_ENABLED) {
                     capsState = CapsState.CAPS_DISABLED
                     createKeyboard()

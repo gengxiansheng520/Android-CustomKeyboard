@@ -17,6 +17,9 @@ class NumberKeyboardLayout(context: Context, controller: KeyboardController?) :
         val columnWidth = 0.20f
         textSize = 22.0f
 
+        val rowZero = ArrayList<View>()
+        rowZero.add(createTextView("",1f))
+
         val rowOne = ArrayList<View>()
         rowOne.add(createButton("1", columnWidth, '1'))
         rowOne.add(createButton("2", columnWidth, '2'))
@@ -42,6 +45,7 @@ class NumberKeyboardLayout(context: Context, controller: KeyboardController?) :
         }
 
         val rows = ArrayList<LinearLayout>()
+        rows.add(createRow(rowZero))
         rows.add(createRow(rowOne))
         rows.add(createRow(rowTwo))
         rows.add(createRow(rowThree))

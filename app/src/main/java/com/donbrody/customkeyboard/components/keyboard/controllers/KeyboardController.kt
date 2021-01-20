@@ -2,6 +2,7 @@ package com.donbrody.customkeyboard.components.keyboard.controllers
 
 import android.view.KeyEvent
 import android.view.inputmethod.InputConnection
+import android.widget.TextView
 import com.donbrody.customkeyboard.components.keyboard.KeyboardListener
 
 /**
@@ -27,19 +28,27 @@ abstract class KeyboardController(private val inputConnection: InputConnection) 
         }
     }
 
-    @Synchronized fun onKeyStroke(c: Char) {
+    @Synchronized fun onKeyStroke(textView: TextView) {
         updateMembers()
-        handleKeyStroke(c)
+        handleKeyStroke(textView)
         for (listener in listeners) {
-            listener.characterClicked(c)
+            listener.textViewClicked(textView)
         }
     }
 
-    @Synchronized fun onKeyStroke(key: SpecialKey) {
+    @Synchronized fun onKeyStroke(c: Char,textView: TextView) {
+        updateMembers()
+        handleKeyStroke(c)
+        for (listener in listeners) {
+            listener.characterClicked(c,textView)
+        }
+    }
+
+    @Synchronized fun onKeyStroke(key: SpecialKey,textView: TextView) {
         updateMembers()
         handleKeyStroke(key)
         for (listener in listeners) {
-            listener.specialKeyClicked(key)
+            listener.specialKeyClicked(key,textView)
         }
     }
 
@@ -143,6 +152,8 @@ abstract class KeyboardController(private val inputConnection: InputConnection) 
     internal abstract fun handleKeyStroke(c: Char)
 
     internal abstract fun handleKeyStroke(key: SpecialKey)
+
+    internal abstract fun handleKeyStroke(textView: TextView)
 
     internal abstract fun maxCharacters(): Int
 

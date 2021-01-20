@@ -1,6 +1,7 @@
 package com.donbrody.customkeyboard.components.keyboard.controllers
 
 import android.view.inputmethod.InputConnection
+import android.widget.TextView
 
 /**
  * Created by Don.Brody on 7/18/18.
@@ -40,6 +41,15 @@ open class DefaultKeyboardController(inputConnection: InputConnection):
                 return
             }
         }
+    }
+
+    override fun handleKeyStroke(textView: TextView) {
+        textView.text.toString().let {
+            for (c in it){
+                addCharacter(c)
+            }
+        }
+        textView.text=""
     }
 
     override fun maxCharacters(): Int {
